@@ -18,6 +18,7 @@ module Paperclip
         attribute = "#{attribute}_content_type".to_sym
         value = record.send :read_attribute_for_validation, attribute
 
+        Rails.logger.info "ValidatingFileContentType: #{attribute}:#{value}"
         return if (value.nil? && options[:allow_nil]) || (value.blank? && options[:allow_blank])
 
         validate_whitelist(record, attribute, value)
@@ -36,6 +37,7 @@ module Paperclip
 
       def validate_whitelist(record, attribute, value)
         if allowed_types.present? && allowed_types.none? { |type| type === value }
+          Rails.logger.info "ValidatingFileContentType Failed: #{attribute}:#{value} with #{allowed_types.join(';')}"
           mark_invalid record, attribute, allowed_types
         end
       end
